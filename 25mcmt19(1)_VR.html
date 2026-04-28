@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VR Lecture Room - 25mcmt19</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:Arial,sans-serif; }
+canvas#c3d { display:block; }
+
+#buttons {
+  position:fixed; top:50%; right:20px;
+  transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:10px; z-index:10;
+}
+.course-btn {
+  padding:12px 18px; font-size:14px; font-weight:bold;
+  color:white; border:none; border-radius:8px;
+  cursor:pointer; width:145px; text-align:center;
+  transition:transform .15s;
+}
+.course-btn:hover { transform:scale(1.06); }
+.course-btn.active { outline:3px solid white; }
+
+#controls {
+  position:fixed; bottom:18px; left:50%;
+  transform:translateX(-50%); z-index:10;
+}
+#controls button {
+  padding:10px 28px; font-size:15px;
+  background:rgba(255,255,255,0.18); color:white;
+  border:1px solid rgba(255,255,255,0.45);
+  border-radius:6px; cursor:pointer;
+}
+#controls button:hover { background:rgba(255,255,255,0.32); }
+
+#info {
+  position:fixed; top:14px; left:50%; transform:translateX(-50%);
+  color:rgba(255,255,255,0.85); font-size:13px;
+  background:rgba(0,0,0,0.5); padding:6px 16px;
+  border-radius:20px; z-index:10; pointer-events:none;
+}
+#status {
+  position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
+  color:#ffeb3b; font-size:13px;
+  background:rgba(0,0,0,0.65); padding:5px 16px;
+  border-radius:14px; z-index:10; pointer-events:none; white-space:nowrap;
+}
+</style>
+</head>
+<body>
+
+<canvas id="c3d"></canvas>
+<div id="info">🖱️ Drag to look around &nbsp;|&nbsp; 🖱️ Click screen = Play/Pause &nbsp;|&nbsp; Buttons = switch course</div>
+
+<div id="buttons">
+  <div style="color:white;font-size:13px;text-align:center;margin-bottom:4px;opacity:.85;">📚 Courses</div>
+  <button class="course-btn active" style="background:#1565C0" onclick="switchCourse(0,this)">Intro to CS</button>
+  <button class="course-btn"       style="background:#2E7D32" onclick="switchCourse(1,this)">OOP Course</button>
+  <button class="course-btn"       style="background:#E65100" onclick="switchCourse(2,this)">OS Course</button>
+  <button class="course-btn"       style="background:#6A1B9A" onclick="switchCourse(3,this)">COA Course</button>
+</div>
+
+<div id="status">▶ Playing: Intro to CS</div>
+<div id="controls"><button onclick="togglePlay()">⏯ Play / Pause</button></div>
+
+<!-- Hidden 2D canvas used as video texture -->
+<canvas id="cvid" width="512" height="300" style="display:none"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── Course "animations" drawn on canvas ──────────────────────────────────────
+const COURSES = [
+  {
+    name: 'Intro to CS',
+    color: '#1565C0',
+    draw(ctx, t, W, H) {
+      ctx.fillStyle = '#0a0a2e';
+      ctx.fillRect(0,0,W,H);
+      // Title
+      ctx.fillStyle = '#64b5f6';
+      ctx.font = 'bold 28px monospace';
+      ctx.fillText('Intro to Computer Science', 20, 48);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px monospace';
+      // Animated binary rain
+      for (let i = 0; i < 20; i++) {
+        const x = (i * 26 + t * 0.5 * (i%3===0?1:-1)) % W;
+        const y = 80 + ((t * 0.8 + i * 37) % (H - 80));
+        ctx.fillStyle = `rgba(100,200,100,${0.3 + 0.5*(i%2)})`;
+        ctx.fillText(i%2===0?'1':'0', x, y);
+      }
+      // Topics
+      const topics = ['▶ What is an Algorithm?','▶ Data Structures','▶ Logic Gates','▶ How CPU works'];
+      const active = Math.floor(t/80) % topics.length;
+      topics.forEach((tp, i) => {
+        ctx.fillStyle = i===active ? '#ffeb3b' : '#90caf9';
+        ctx.font = (i===active?'bold ':'')+'15px Arial';
+        ctx.fillText(tp, 30, 130 + i * 34);
+      });
+      // Progress bar
+      const pct = (t % 400) / 400;
+      ctx.fillStyle = '#1a237e';
+      ctx.fillRect(20, H-30, W-40, 12);
+      ctx.fillStyle = '#42a5f5';
+      ctx.fillRect(20, H-30, (W-40)*pct, 12);
+      ctx.fillStyle = '#fff';
+      ctx.font = '11px Arial';
+      ctx.fillText(`${Math.floor(pct*100)}%`, W/2-12, H-20);
+    }
+  },
+  {
+    name: 'OOP Course',
+    color: '#2E7D32',
+    draw(ctx, t, W, H) {
+      ctx.fillStyle = '#0d1f0d';
+      ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = '#a5d6a7';
+      ctx.font = 'bold 28px monospace';
+      ctx.fillText('Object Oriented Programming', 16, 44);
+      // Animated class diagram boxes
+      const classes = ['Animal','Dog','Cat'];
+      classes.forEach((cls, i) => {
+        const bx = 30 + i*160, by = 70;
+        const pulse = 1 + 0.04*Math.sin(t*0.05 + i);
+        ctx.save();
+        ctx.translate(bx + 60, by + 30);
+        ctx.scale(pulse, pulse);
+        ctx.translate(-(bx+60), -(by+30));
+        ctx.strokeStyle = '#66bb6a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(bx, by, 120, 60);
+        ctx.fillStyle = '#1b5e20';
+        ctx.fillRect(bx, by, 120, 24);
+        ctx.fillStyle = '#e8f5e9';
+        ctx.font = 'bold 13px monospace';
+        ctx.fillText(cls, bx+10, by+16);
+        ctx.fillStyle = '#c8e6c9';
+        ctx.font = '12px monospace';
+        ctx.fillText('+ speak()', bx+8, by+44);
+        ctx.restore();
+        // Arrow to parent
+        if (i > 0) {
+          ctx.strokeStyle = '#81c784';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(bx, by+30);
+          ctx.lineTo(30+70, by+30);
+          ctx.stroke();
+        }
+      });
+      const concepts = ['▶ Encapsulation','▶ Inheritance','▶ Polymorphism','▶ Abstraction'];
+      const active = Math.floor(t/70) % concepts.length;
+      concepts.forEach((c, i) => {
+        ctx.fillStyle = i===active ? '#ffee58' : '#a5d6a7';
+        ctx.font = (i===active?'bold ':'')+'14px Arial';
+        ctx.fillText(c, 30, 175 + i*28);
+      });
+      const pct = (t%400)/400;
+      ctx.fillStyle='#1b5e20'; ctx.fillRect(20,H-30,W-40,12);
+      ctx.fillStyle='#66bb6a'; ctx.fillRect(20,H-30,(W-40)*pct,12);
+      ctx.fillStyle='#fff'; ctx.font='11px Arial';
+      ctx.fillText(Math.floor(pct*100)+'%',W/2-12,H-20);
+    }
+  },
+  {
+    name: 'OS Course',
+    color: '#E65100',
+    draw(ctx, t, W, H) {
+      ctx.fillStyle = '#1a0900';
+      ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = '#ffb74d';
+      ctx.font = 'bold 28px monospace';
+      ctx.fillText('Operating Systems', 20, 44);
+      // CPU scheduler animation
+      const procs = ['P1','P2','P3','P4'];
+      const colors = ['#ef5350','#42a5f5','#66bb6a','#ab47bc'];
+      const slot = Math.floor(t/40) % procs.length;
+      ctx.fillStyle = '#ff8f00';
+      ctx.font = '13px Arial';
+      ctx.fillText('CPU Scheduler (Round Robin)', 20, 72);
+      procs.forEach((p, i) => {
+        const bx = 20 + i*120, by = 82;
+        ctx.fillStyle = i===slot ? colors[i] : colors[i]+'55';
+        ctx.fillRect(bx, by, 100, 44);
+        ctx.fillStyle = '#fff';
+        ctx.font = (i===slot?'bold ':'')+'16px monospace';
+        ctx.fillText(p, bx+38, by+28);
+        if (i===slot) {
+          ctx.fillStyle = '#ffeb3b';
+          ctx.font = '11px Arial';
+          ctx.fillText('RUNNING', bx+22, by+40);
+        }
+      });
+      // Memory bar
+      ctx.fillStyle='#ff8f00'; ctx.font='13px Arial';
+      ctx.fillText('Memory Usage:', 20, 152);
+      const memPct = 0.55 + 0.2*Math.sin(t*0.03);
+      ctx.fillStyle='#37474f'; ctx.fillRect(20,158,W-40,20);
+      ctx.fillStyle='#ef5350'; ctx.fillRect(20,158,(W-40)*memPct,20);
+      ctx.fillStyle='#fff'; ctx.font='11px Arial';
+      ctx.fillText(Math.floor(memPct*100)+'% used',W/2-20,172);
+      const topics=['▶ Process Scheduling','▶ Memory Management','▶ File Systems','▶ Deadlocks'];
+      const active=Math.floor(t/70)%topics.length;
+      topics.forEach((tp,i)=>{
+        ctx.fillStyle=i===active?'#ffee58':'#ffcc80';
+        ctx.font=(i===active?'bold ':'')+'14px Arial';
+        ctx.fillText(tp,30,198+i*24);
+      });
+      const pct=(t%400)/400;
+      ctx.fillStyle='#bf360c'; ctx.fillRect(20,H-30,W-40,12);
+      ctx.fillStyle='#ff7043'; ctx.fillRect(20,H-30,(W-40)*pct,12);
+      ctx.fillStyle='#fff'; ctx.font='11px Arial';
+      ctx.fillText(Math.floor(pct*100)+'%',W/2-12,H-20);
+    }
+  },
+  {
+    name: 'COA Course',
+    color: '#6A1B9A',
+    draw(ctx, t, W, H) {
+      ctx.fillStyle = '#0d0020';
+      ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = '#ce93d8';
+      ctx.font = 'bold 26px monospace';
+      ctx.fillText('Computer Organization & Arch.', 10, 40);
+      // Logic gate animation
+      ctx.strokeStyle = '#ab47bc'; ctx.lineWidth = 2;
+      // AND gate
+      const gx=30, gy=60;
+      ctx.beginPath();
+      ctx.moveTo(gx,gy); ctx.lineTo(gx+40,gy);
+      ctx.arc(gx+40,gy+20,20,-Math.PI/2,Math.PI/2);
+      ctx.lineTo(gx,gy+40); ctx.closePath(); ctx.stroke();
+      ctx.fillStyle='#e1bee7'; ctx.font='12px Arial';
+      ctx.fillText('AND',gx+25,gy+24);
+      // Input wires animated
+      const sig = Math.floor(t/60)%4;
+      const a = sig>>1, b = sig&1;
+      ctx.fillStyle = a?'#66bb6a':'#ef5350';
+      ctx.fillText('A='+a, gx-28, gy+10);
+      ctx.fillStyle = b?'#66bb6a':'#ef5350';
+      ctx.fillText('B='+b, gx-28, gy+34);
+      ctx.fillStyle = (a&&b)?'#66bb6a':'#ef5350';
+      ctx.fillText('OUT='+(a&&b?1:0), gx+90, gy+24);
+      // Register file visualization
+      ctx.fillStyle='#ce93d8'; ctx.font='13px Arial';
+      ctx.fillText('Register File:', 220, 72);
+      ['R0','R1','R2','R3'].forEach((r,i)=>{
+        const val=Math.floor((Math.sin(t*0.02+i)*0x7FFF+0x7FFF))&0xFFFF;
+        ctx.fillStyle= i===Math.floor(t/50)%4 ? '#ce93d8' : '#7b1fa2';
+        ctx.fillRect(220,80+i*34,W-240,26);
+        ctx.fillStyle='#fff'; ctx.font='12px monospace';
+        ctx.fillText(`${r}: 0x${val.toString(16).toUpperCase().padStart(4,'0')}`,228,98+i*34);
+      });
+      const topics=['▶ Logic Gates','▶ ALU Design','▶ CPU Pipeline','▶ Cache Memory'];
+      const active=Math.floor(t/70)%topics.length;
+      topics.forEach((tp,i)=>{
+        ctx.fillStyle=i===active?'#ffee58':'#e1bee7';
+        ctx.font=(i===active?'bold ':'')+'14px Arial';
+        ctx.fillText(tp,30,220+i*22);
+      });
+      const pct=(t%400)/400;
+      ctx.fillStyle='#4a148c'; ctx.fillRect(20,H-30,W-40,12);
+      ctx.fillStyle='#ab47bc'; ctx.fillRect(20,H-30,(W-40)*pct,12);
+      ctx.fillStyle='#fff'; ctx.font='11px Arial';
+      ctx.fillText(Math.floor(pct*100)+'%',W/2-12,H-20);
+    }
+  }
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let currentIdx = 0;
+let isPlaying = true;
+let animT = 0;
+
+// ── Three.js ──────────────────────────────────────────────────────────────────
+const renderer3d = new THREE.WebGLRenderer({ antialias:true, canvas: document.getElementById('c3d') });
+renderer3d.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 1.6, 4);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+const pt = new THREE.PointLight(0xffffff, 0.8, 30);
+pt.position.set(0, 4, 2); scene.add(pt);
+
+function box(w,h,d,color,x,y,z){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color}));
+  m.position.set(x,y,z); scene.add(m);
+}
+box(9,0.05,6, 0xc68642, 0,0,0);
+box(9,0.05,6, 0xe0e0e0, 0,5,0);
+box(9,5,0.1,  0xF5F5A0, 0,2.5,-3);
+box(0.1,5,6,  0xF5F5A0, -4.5,2.5,0);
+box(0.1,5,6,  0xF5F5A0,  4.5,2.5,0);
+box(7,1.2,1.5,0x8B4513, 0,0.6,-2.25);
+box(7,3.25,0.05,0xdddddd,0,2.5,-2.9);
+
+// ── Video canvas texture ───────────────────────────────────────────────────────
+const vidCanvas = document.getElementById('cvid');
+const vctx = vidCanvas.getContext('2d');
+const vidTex = new THREE.CanvasTexture(vidCanvas);
+vidTex.minFilter = THREE.LinearFilter;
+vidTex.magFilter = THREE.LinearFilter;
+
+const screenMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(5.15, 3),
+  new THREE.MeshBasicMaterial({ map: vidTex })
+);
+screenMesh.position.set(-1, 2.5, -2.84);
+scene.add(screenMesh);
+
+// ── Controls ───────────────────────────────────────────────────────────────────
+function switchCourse(idx, btn) {
+  currentIdx = idx;
+  animT = 0;
+  document.querySelectorAll('.course-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  setStatus('▶ Playing: '+COURSES[idx].name);
+}
+function togglePlay() {
+  isPlaying = !isPlaying;
+  setStatus((isPlaying?'▶ Playing: ':'⏸ Paused: ')+COURSES[currentIdx].name);
+}
+function setStatus(t){ document.getElementById('status').textContent=t; }
+
+// ── Click on screen = play/pause ─────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let mouseMovedAfterDown = false;
+
+document.getElementById('c3d').addEventListener('mousedown', e => {
+  mouseMovedAfterDown = false;
+  drag=true; px=e.clientX; py=e.clientY;
+});
+document.getElementById('c3d').addEventListener('click', e => {
+  if (mouseMovedAfterDown) return; // was a drag, not a click
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObject(screenMesh);
+  if (hits.length > 0) togglePlay();
+});
+
+// ── Mouse drag ────────────────────────────────────────────────────────────────
+let drag=false,px=0,py=0,rotX=0,rotY=0;
+window.addEventListener('mouseup',()=>{drag=false;});
+window.addEventListener('mousemove',e=>{
+  if(drag && (Math.abs(e.clientX-px)>3 || Math.abs(e.clientY-py)>3)) mouseMovedAfterDown=true;
+  if(!drag)return;
+  rotY-=(e.clientX-px)*0.003; rotX-=(e.clientY-py)*0.003;
+  rotX=Math.max(-Math.PI/3,Math.min(Math.PI/3,rotX));
+  px=e.clientX;py=e.clientY;
+  camera.rotation.order='YXZ';
+  camera.rotation.y=rotY; camera.rotation.x=rotX;
+});
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer3d.setSize(window.innerWidth,window.innerHeight);
+});
+
+// ── Render loop ───────────────────────────────────────────────────────────────
+(function animate(){
+  requestAnimationFrame(animate);
+  if(isPlaying){
+    animT++;
+    COURSES[currentIdx].draw(vctx, animT, vidCanvas.width, vidCanvas.height);
+    vidTex.needsUpdate=true;
+  }
+  renderer3d.render(scene,camera);
+})();
+</script>
+</body>
+</html>

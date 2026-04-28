@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VR Lecture Room</title>
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+
+<body>
+
+<a-scene>
+
+<!-- Camera -->
+<a-entity position="0 1.6 4">
+<a-camera></a-camera>
+</a-entity>
+
+<!-- Floor -->
+<a-plane rotation="-90 0 0"
+width="9"
+height="6"
+color="#c68642">
+</a-plane>
+
+<!-- Ceiling -->
+<a-plane rotation="90 0 0"
+position="0 5 0"
+width="9"
+height="6"
+color="white">
+</a-plane>
+
+<!-- Back Wall -->
+<a-box position="0 2.5 -3"
+width="9"
+height="5"
+depth="0.1"
+color="#F5F5A0">
+</a-box>
+
+<!-- Left Wall -->
+<a-box position="-4.5 2.5 0"
+width="0.1"
+height="5"
+depth="6"
+color="#F5F5A0">
+</a-box>
+
+<!-- Right Wall -->
+<a-box position="4.5 2.5 0"
+width="0.1"
+height="5"
+depth="6"
+color="#F5F5A0">
+</a-box>
+
+<!-- Stage -->
+<a-box position="0 0.6 -2.25"
+width="7"
+height="1.2"
+depth="1.5"
+color="#8B4513">
+</a-box>
+
+<!-- Display Board -->
+<a-box position="0 2.5 -2.9"
+width="7"
+height="3.25"
+depth="0.05"
+color="#dddddd">
+</a-box>
+
+<!-- Video Area -->
+<a-video
+src="https://cdn.aframe.io/videos/bunny.mp4"
+position="-1 2.5 -2.85"
+width="5.15"
+height="3">
+</a-video>
+
+<!-- Buttons -->
+
+<a-box position="2.7 3.4 -2.8" width="0.8" height="0.3" depth="0.1" color="blue"></a-box>
+<a-text value="Intro to CS" position="2.7 3.4 -2.7" align="center" color="white" width="3"></a-text>
+
+<a-box position="2.7 2.9 -2.8" width="0.8" height="0.3" depth="0.1" color="green"></a-box>
+<a-text value="OOP Course" position="2.7 2.9 -2.7" align="center" color="white" width="3"></a-text>
+
+<a-box position="2.7 2.4 -2.8" width="0.8" height="0.3" depth="0.1" color="orange"></a-box>
+<a-text value="OS Course" position="2.7 2.4 -2.7" align="center" color="white" width="3"></a-text>
+
+<a-box position="2.7 1.9 -2.8" width="0.8" height="0.3" depth="0.1" color="purple"></a-box>
+<a-text value="COA Course" position="2.7 1.9 -2.7" align="center" color="white" width="3"></a-text>
+
+<!-- Light -->
+<a-light type="ambient" intensity="0.7"></a-light>
+<a-light type="point" position="0 4 2"></a-light>
+
+</a-scene>
+
+</body>
+</html>

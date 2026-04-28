@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VR Room</title>
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+
+<body>
+
+<a-scene>
+
+<!-- ASSETS -->
+<a-assets>
+<img id="myphoto" src="myphoto.jpg">
+<img id="mypic" src="mypic.jpeg">
+<video id="myvideo"
+src="https://cdn.aframe.io/videos/bunny.mp4"
+crossorigin="anonymous">
+</video>
+</a-assets>
+
+<!-- SKY -->
+<a-sky color="#ECECEC"></a-sky>
+
+<!-- FLOOR -->
+<a-plane
+position="0 0 0"
+rotation="-90 0 0"
+width="4"
+height="3"
+color="#7BC8A4">
+</a-plane>
+
+<!-- CEILING -->
+<a-plane
+position="0 3 0"
+rotation="90 0 0"
+width="4"
+height="3"
+color="#cccccc">
+</a-plane>
+
+<!-- BACK WALL -->
+<a-plane
+position="0 1.5 -2"
+width="4"
+height="3"
+color="#ffffff">
+</a-plane>
+
+<!-- LEFT WALL -->
+<a-plane
+position="-2 1.5 0"
+rotation="0 90 0"
+width="3"
+height="3"
+color="#dddddd">
+</a-plane>
+
+<!-- RIGHT WALL -->
+<a-plane
+position="2 1.5 0"
+rotation="0 -90 0"
+width="3"
+height="3"
+color="#dddddd">
+</a-plane>
+
+<!-- PHOTO ON LEFT WALL -->
+<a-plane
+src="#myphoto"
+position="-1.99 1.6 -0.5"
+rotation="0 90 0"
+width="1.5"
+height="2">
+</a-plane>
+
+<!-- NEW PHOTO ON RIGHT WALL -->
+<a-plane
+src="#mypic"
+position="1.99 1.6 -0.5"
+rotation="0 -90 0"
+width="1.3"
+height="1.8">
+</a-plane>
+
+<!-- VIDEO ON BACK WALL -->
+<a-video
+src="#myvideo"
+position="0 1.6 -1.99"
+width="2"
+height="1.2"
+onclick="toggleVideo()">
+</a-video>
+
+<!-- TABLE -->
+<a-box
+position="0 0.5 -0.3"
+depth="1"
+height="0.3"
+width="1.6"
+color="#8B4513">
+</a-box>
+
+<!-- SMALL BOX ON TABLE -->
+<a-box
+position="0 0.9 -0.3"
+depth="0.3"
+height="0.3"
+width="0.3"
+color="red">
+</a-box>
+
+<!-- DECORATION CIRCLE -->
+<a-circle
+position="1 1 -1"
+radius="0.4"
+color="blue">
+</a-circle>
+
+<!-- CURVED IMAGE -->
+<a-curvedimage
+src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg"
+height="1"
+radius="3"
+theta-length="90"
+position="-1 1 -1">
+</a-curvedimage>
+
+<!-- LINK -->
+<a-link
+href="https://aframe.io"
+position="0 1 -0.5"
+title="AFrame Website">
+</a-link>
+
+<!-- CAMERA -->
+<a-entity position="0 1.6 1.5">
+<a-camera></a-camera>
+</a-entity>
+
+</a-scene>
+
+<script>
+function toggleVideo(){
+let video=document.querySelector("#myvideo");
+if(video.paused){
+video.play();
+}else{
+video.pause();
+}
+}
+</script>
+
+</body>
+</html>

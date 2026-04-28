@@ -1,0 +1,32 @@
+Task IV – Part II Answers
+
+1. What is npm?
+   npm (Node Package Manager) is a tool used to install, manage and run JavaScript packages and dependencies required for a project.
+
+2. What does npx do?
+   npx is used to run Node packages without installing them globally. It executes packages directly.
+
+3. What are some npm commands?
+   Some commonly used npm commands are:
+
+* npm install → installs dependencies
+* npm start → runs the application
+* npm run build → creates production build
+
+4. What happens if you change the argument to app.route()?
+   Changing the argument in app.route() changes the URL endpoint. For example, if '/data' is changed to '/info', then the API will be accessed at /info.
+
+5. What is JSON and why is it popular?
+   JSON (JavaScript Object Notation) is a lightweight data format used for data exchange. It is popular because it is easy to read, language independent, and fast.
+
+6. What is the role of a template file in Flask?
+   A template file (HTML) is used to display data on a web page using Flask. It helps in rendering dynamic content.
+
+7. Why did you add port 5000 in package.json?
+   Port 5000 is used because Flask runs on port 5000 by default. It helps React connect to the Flask backend.
+
+8. Did you try displaying the output of any other Python program?
+   Yes, we displayed Flask API output (JSON data) on a React webpage using fetch API.
+
+Conclusion:
+In this experiment, we connected a Flask backend with a React frontend and displayed data dynamically on a web page.

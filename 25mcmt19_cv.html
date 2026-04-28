@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My CV</title>
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+scroll-behavior:smooth;
+font-family:Segoe UI, sans-serif;
+}
+
+/* THEMES */
+body.light{
+--bg:white;
+--text:black;
+--card:rgba(255,255,255,0.95);
+--sidebar:linear-gradient(#111,#444);
+}
+
+body.blue{
+--bg:#fff8dc;
+--text:#083d77;
+--card:rgba(255,248,220,0.95);
+--sidebar:linear-gradient(#0a2540,#134074);
+}
+
+body.dark{
+--bg:#0d1117;
+--text:#e6edf3;
+--card:#161b22;
+--sidebar:linear-gradient(#000,#222);
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+transition:.4s;
+}
+
+/* LAYOUT */
+.container{ display:flex; }
+
+/* SIDEBAR */
+.sidebar{
+width:25%;
+height:100vh;
+position:fixed;
+background:var(--sidebar);
+color:white;
+padding:25px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+padding:10px;
+margin:10px 0;
+border-radius:6px;
+transition:.3s;
+}
+
+.sidebar a:hover{ background:#666; }
+
+/* CONTENT */
+.content{
+margin-left:25%;
+width:75%;
+}
+
+/* PARALLAX BACKGROUND IMAGE SMALL */
+.parallax{
+background-image:url("myphoto.jpg");
+background-attachment:fixed;
+background-position:center top;
+background-repeat:no-repeat;
+background-size:70%;   /* IMAGE SMALL */
+background-color:black;
+padding:80px 0;
+}
+
+/* HERO */
+.hero{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.overlay{
+background:rgba(0,0,0,0.6);
+color:white;
+padding:30px;
+border-radius:15px;
+text-align:center;
+}
+
+/* SECTIONS */
+.section{
+background:var(--card);
+padding:60px;
+margin:40px auto;
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+max-width:900px;
+}
+
+/* BUTTON */
+.btn{
+margin-top:15px;
+padding:12px;
+text-align:center;
+background:#008cba;
+border-radius:8px;
+cursor:pointer;
+transition:.3s;
+}
+
+.btn:hover{ background:#005f7a; }
+
+/* MOBILE */
+@media(max-width:768px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.content{
+margin-left:0;
+width:100%;
+}
+
+.parallax{
+background-attachment:scroll;
+background-size:contain;
+}
+
+}
+
+</style>
+</head>
+
+<body class="light">
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<h2>My CV</h2>
+
+<a href="#about">About</a>
+<a href="#education">Education</a>
+<a href="#skills">Skills</a>
+<a href="#projects">Projects</a>
+<a href="#hobbies">Hobbies</a>
+<a href="#contact">Contact</a>
+
+<div class="btn" onclick="setTheme('light')">Default Theme</div>
+<div class="btn" onclick="setTheme('blue')">Blue Theme</div>
+<div class="btn" onclick="setTheme('dark')">Dark Theme</div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content parallax">
+
+<!-- HERO -->
+<div class="hero">
+<div class="overlay">
+<h1>Shanikant</h1>
+<p>Student | Developer | Tech Enthusiast</p>
+</div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+<h2>About Me</h2>
+<p>
+I am a passionate student interested in software development,
+problem solving, and emerging technologies.
+</p>
+</section>
+
+<!-- EDUCATION -->
+<section id="education" class="section">
+<h2>Education</h2>
+<ul>
+<li>M.Tech — UOH</li>
+<li>B.Tech — SRM University</li>
+<li>12th — Satyam International School</li>
+<li>10th — Parvati Prema School</li>
+</ul>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section">
+<h2>Skills</h2>
+<ul>
+<li>HTML, CSS, JavaScript</li>
+<li>Python, Java</li>
+<li>Data Structures</li>
+<li>Problem Solving</li>
+</ul>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="section">
+<h2>Projects</h2>
+<ul>
+<li>Interactive Timetable Website</li>
+<li>Student Result System</li>
+<li>Portfolio Website</li>
+</ul>
+</section>
+
+<!-- HOBBIES -->
+<section id="hobbies" class="section">
+<h2>Hobbies</h2>
+<ul>
+<li style="display:flex;align-items:center;gap:10px;">
+Cricket
+<img src="cricket.png" style="width:60px;border-radius:10px;">
+</li>
+<li>Music</li>
+<li>Photography</li>
+<li>Exploring Technology</li>
+</ul>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section">
+<h2>Contact</h2>
+<p>Email: 25mcmt19@uohyd.ac.in</p>
+<p>Phone: 9065423332</p>
+<p>Location: India</p>
+</section>
+
+</div>
+</div>
+
+<script>
+function setTheme(theme){
+document.body.classList.remove("light","blue","dark");
+document.body.classList.add(theme);
+}
+</script>
+
+</body>
+</html>
+

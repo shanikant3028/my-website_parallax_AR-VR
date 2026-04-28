@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Interactive Timetable</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+
+<body>
+
+<nav class="topnav">
+<div class="nav-title">My Website</div>
+<div class="nav-links">
+    <a href="./index.html">Home</a>
+    <a href="./education.html">Education</a>
+    <a href="./hobbies.html">Hobbies</a>
+    <a href="./technical.html">Technical</a>
+    <a href="./miscellaneous.html">Miscellaneous</a>
+    <a href="./contact.html">Contact</a>
+    <a href="./timetable.html">Timetable</a>
+    <a href="25mcmt19_cv.html">CV</a>
+
+    
+</div>
+</nav>
+
+<div class="content">
+
+<h2>Interactive Class Timetable</h2>
+
+<!-- DAY SELECT -->
+<select id="daySelect" class="w3-select w3-border">
+<option value="">Select Day</option>
+<option value="mon">Monday</option>
+<option value="tue">Tuesday</option>
+<option value="wed">Wednesday</option>
+<option value="thu">Thursday</option>
+<option value="fri">Friday</option>
+</select>
+
+<!-- PROGRAM SELECT -->
+<select id="progSelect" class="w3-select w3-border w3-margin-top">
+<option value="">Select Program</option>
+<option value="cs">M.Tech CS</option>
+<option value="ai">M.Tech AI</option>
+<option value="mca">MCA</option>
+</select>
+
+<!-- OUTPUT -->
+<div id="tableBox" class="w3-margin-top"></div>
+
+</div>
+
+<footer class="footer">
+<p>© 2026 Shanikant</p>
+</footer>
+
+<script>
+
+const data={
+mon:{
+cs:[
+["09:00 - 10:00","Natural Language Processing"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Software Engineering"],
+["14:00 - 15:00","Image Processing"],
+["16:00 - 17:00","Deep Learning"]
+],
+ai:[
+["09:00 - 10:00","Natural Language Processing"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Software Engineering"],
+["14:00 - 15:00","Cloud Computing"]
+],
+mca:[
+["09:00 - 10:00","Programming"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Database"],
+["14:00 - 15:00","Networking"]
+]
+},
+
+tue:{
+cs:[
+["09:00 - 10:00","System Security"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Machine Learning"],
+["14:00 - 16:00","SE Lab"]
+],
+ai:[
+["09:00 - 10:00","System Security"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Machine Learning"],
+["16:00 - 17:00","Networks"]
+],
+mca:[
+["09:00 - 10:00","OS"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Web Tech"],
+["14:00 - 15:00","Lab"]
+]
+},
+
+wed:{
+cs:[
+["09:00 - 10:00","NLP"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Deep Learning"]
+],
+ai:[
+["09:00 - 10:00","AI"],
+["10:00 - 11:00","FREE TIME"],
+["11:00 - 12:00","Cloud"]
+]
+}
+};
+
+    
+    document.getElementById("daySelect").onchange=show;
+    document.getElementById("progSelect").onchange=show;
+    
+    function show(){
+    
+    let d=document.getElementById("daySelect").value;
+    let p=document.getElementById("progSelect").value;
+    
+    if(!d||!p)return;
+    
+    let html="<table class='w3-table w3-bordered'><tr><th>Time</th><th>Subject</th></tr>";
+    
+    data[d][p].forEach(row=>{
+    
+    let now=new Date();
+    let currentHour=now.getHours();
+    
+    let start=parseInt(row[0].split(":")[0]);
+    
+    let highlight = (currentHour===start)
+    ? "style='background:#d4edda;font-weight:bold'"
+    : "";
+    
+    html+=`<tr ${highlight} onclick="details('${row[1]}')">
+    <td>${row[0]}</td>
+    <td>${row[1]}</td>
+    </tr>`;
+    });
+    
+    html+="</table>";
+    
+    document.getElementById("tableBox").innerHTML=html;
+    }
+    
+    function details(sub){
+    
+    const links={
+    "Natural Language Processing":"https://en.wikipedia.org/wiki/Natural_language_processing",
+    "Machine Learning":"https://en.wikipedia.org/wiki/Machine_learning",
+    "System Security":"https://en.wikipedia.org/wiki/Computer_security",
+    "Deep Learning":"https://en.wikipedia.org/wiki/Deep_learning"
+    };
+    
+    let link=links[sub]||"#";
+    
+    document.getElementById("tableBox").innerHTML+=`
+    <div class="w3-panel w3-light-grey w3-margin-top">
+    <b>${sub}</b><br>
+    <a href="${link}" target="_blank">Open Course Page</a>
+    </div>`;
+    }
+    
+    </script>
+    
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .logo-circle{
+      width:100px;
+      height:100px;
+      border-radius:50%;
+      background:#2c3e50;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:36px;
+      font-weight:bold;
+      margin:0 auto 20px;
+      transition:.3s;
+    }
+    .logo-circle:hover{
+      transform:scale(1.1);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="topnav">
+  <div class="nav-title">Shanikant</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="education.html">Education</a>
+    <a href="hobbies.html">Hobbies</a>
+    <a href="technical.html">Technical</a>
+    <a href="miscellaneous.html">Miscellaneous</a>
+    <a href="contact.html">Contact</a>
+    <a href="timetable.html">Timetable</a>
+    <a href="answers.html">Answers</a>
+    <a href="exercise.html">Exercise</a>
+    <a href="25mcmt19_cv.html">CV</a>
+    <a href="exercise3.html">Exercise3</a>
+    <a href="vr.html">VR Lab</a>
+
+
+ </div>
+</nav>
+
+<div class="content">
+
+<section id="home">
+
+<div class="logo-circle">SK</div>
+
+<h2 class="w3-center">Welcome</h2>
+
+<!-- LIVE CLOCK -->
+<p class="w3-center">
+Current Time: <span id="clock"></span>
+</p>
+
+<!-- TAB BUTTONS -->
+<div class="w3-center w3-margin-top">
+<button class="w3-button w3-dark-grey tabBtn" onclick="openTab('about')">About</button>
+<button class="w3-button w3-dark-grey tabBtn" onclick="openTab('features')">Features</button>
+<button class="w3-button w3-dark-grey tabBtn" onclick="openTab('info')">Quick Info</button>
+</div>
+
+<!-- TAB CONTENT -->
+
+<div id="about" class="tabContent">
+<p>
+Hello, I'm Shanikant and this is my personal website created using HTML, CSS and JavaScript.
+This page demonstrates interactive web features.
+</p>
+</div>
+
+<div id="features" class="tabContent" style="display:none">
+<ul>
+<li>Interactive Tabs</li>
+<li>Live Clock</li>
+<li>Show/Hide Section</li>
+<li>Keyboard Shortcut Navigation</li>
+<li>Hover Animations</li>
+</ul>
+</div>
+
+<div id="info" class="tabContent" style="display:none">
+<p>Press <b>H</b> anytime to return to Home page.</p>
+<button onclick="toggleBox()" class="w3-button w3-black">
+Toggle Extra Info
+</button>
+
+<div id="extraBox" style="display:none;margin-top:15px;">
+This section appears dynamically using JavaScript.
+</div>
+</div>
+
+</section>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+<p>© 2026 Shanikant</p>
+</footer>
+
+<!-- JAVASCRIPT -->
+<script>
+
+/* CLOCK */
+function updateClock(){
+  const now = new Date();
+  document.getElementById("clock").innerText =
+    now.toLocaleTimeString();
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* TAB SWITCH */
+function openTab(tabId){
+  document.querySelectorAll(".tabContent")
+  .forEach(tab=>tab.style.display="none");
+
+  document.getElementById(tabId).style.display="block";
+}
+
+/* SHOW HIDE */
+function toggleBox(){
+  let box=document.getElementById("extraBox");
+  box.style.display = box.style.display==="none" ? "block":"none";
+}
+
+/* KEYBOARD SHORTCUT */
+document.addEventListener("keydown",e=>{
+  if(e.key.toLowerCase()==="h"){
+    window.location="index.html";
+  }
+});
+
+</script>
+
+</body>
+</html>
