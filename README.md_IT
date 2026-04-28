@@ -1,0 +1,29 @@
+# my website_parallax_AR-VR
+
+## 📌 Project Overview
+This project is a parallax scrolling website based on AR/VR concepts. 
+It creates an interactive visual experience by moving background and foreground elements at different speeds.
+
+## 🚀 Features
+- Parallax scrolling effect
+- Smooth animations
+- AR/VR themed design
+- Responsive layout
+
+## 🛠️ Technologies Used
+- HTML
+- CSS
+- JavaScript
+
+## 📂 Project Structure
+- index.html
+- style.css
+- script.js
+- assets/
+
+## ▶️ How to Run
+1. Download or clone the repository
+2. Open index.html in browser
+
+## 📌 Author
+- SHANIKANT
